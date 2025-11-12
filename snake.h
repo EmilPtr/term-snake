@@ -1,0 +1,4 @@
+#ifndef TERM_SNAKE_SNAKE_H
+#define TERM_SNAKE_SNAKE_H
+
+#endif // TERM_SNAKE_SNAKE_H
