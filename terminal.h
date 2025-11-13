@@ -17,7 +17,7 @@ int handle_keypress();
 // Ensures a clean exit of the game and restoring old terminal settings
 void clean_exit(struct termios term);
 
-// Draws the next frame of the game
-void draw_next_frame();
+// Prints a character at the specified coordinate
+void print_coord(int row, int col, char c);
 
 #endif // TERM_SNAKE_TERMINAL_H

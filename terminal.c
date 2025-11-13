@@ -14,8 +14,6 @@
 #define LEFT_CHAR 'D'
 #define QUIT_CHAR 'q'
 
-#define SLEEP_TIME 20000
-
 // Initialize raw mode and non-block char-read from keyboard
 // RETURNS: the termios attributes of the old terminal
 struct termios init_term() {
@@ -69,9 +67,7 @@ void clean_exit(struct termios oldattr) {
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldattr);
 }
 
-// Draws the next frame of the game
-void draw_next_frame() {
-	fflush(stdout);
-	usleep(SLEEP_TIME);
-	system("clear");
+// Prints a character at the specified coordinate
+void print_coord(int row, int col, char c) {
+	printf("\033[%d;%dH%c", row, col, c);
 }
