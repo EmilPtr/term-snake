@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "snake.h"
@@ -8,16 +9,19 @@
 
 #define DRAW_FRAME 5
 #define SLEEP_TIME 20000
+#define SIZE = 20
 
 
 int main() {
-	printf(getenv("LINES") ? "\n" : "");
 	struct termios oldattr = init_term();
 	int frame = 0;
 	int directional_code = 1;
 	struct segment* tailptr = malloc(sizeof(struct segment));
-	struct segment tail = *tailptr;
-	tail = init_snake(tail);
+	init_snake(tailptr);
+	struct segment* headptr = tailptr;
+	struct apple apple = rand_apple();
+
+	srand(time(NULL));
 
 	for (;;) {
 		int new_dir = handle_keypress();
@@ -30,15 +34,14 @@ int main() {
 
 		if (frame == DRAW_FRAME) {
 			system("clear");
-			printf("The directional code is: %d", directional_code);
-			switch (directional_code) {
-				case 1: tail.y-=1; break;
-				case 2: tail.x+=1; break;
-				case 3: tail.y+=1; break;
-				case 4: tail.x-=1; break;
-				default:;
+			headptr = create_head(headptr, directional_code);
+			if (headptr->x != apple.x || headptr->y != apple.y) {
+				tailptr = delete_tail(tailptr);
+				print_coord(apple.y, apple.x, '#');
+			} else {
+				apple = rand_apple();
 			}
-			print_coord(tail.y, tail.x, 'O');
+			draw_snake(tailptr);
 			print_coord(0, 0, 0);
 			frame = 0;
 			fflush(stdout);
