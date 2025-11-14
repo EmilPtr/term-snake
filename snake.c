@@ -1,18 +1,12 @@
 #include "snake.h"
-
-#include <stdio.h>
 #include <stdlib.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
-
 #include "terminal.h"
 
-void init_snake(struct segment* tail) {
-	struct winsize w;
-	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+#define TERM_ZERO_OFFSET 1
 
-	tail->x = w.ws_col/2;
-	tail->y = w.ws_row/2;
+void init_snake(struct segment* tail, int width, int height) {
+	tail->x = width/2;
+	tail->y = height/2;
 	tail->next = nullptr;
 }
 
@@ -63,12 +57,23 @@ struct segment* delete_tail(struct segment* tail) {
 	return seg;
 }
 
-struct apple rand_apple() {
-	struct winsize w;
-	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+struct apple rand_apple(int width, int height) {
 	struct apple new_apple = {
-		.x = (rand() % (w.ws_col + 1)),
-		.y = (rand() % (w.ws_row + 1))
+		.x = TERM_ZERO_OFFSET + rand() % (width - TERM_ZERO_OFFSET + 1),
+		.y = TERM_ZERO_OFFSET + rand() % (height - TERM_ZERO_OFFSET + 1)
 	};
 	return new_apple;
+}
+
+bool check_collision(struct segment* tail, struct segment* head) {
+	struct segment* seg = tail;
+	bool flag = false;
+	while (seg->next != nullptr) {
+		if (seg->x == head->x && seg->y == head->y) {
+			flag = true;
+			break;
+		}
+		seg = seg->next;
+	}
+	return flag;
 }

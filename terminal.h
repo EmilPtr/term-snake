@@ -20,4 +20,8 @@ void clean_exit(struct termios term);
 // Prints a character at the specified coordinate
 void print_coord(int row, int col, char c);
 
+void print_border(int width, int height);
+
+void game_over_anim(int score);
+
 #endif // TERM_SNAKE_TERMINAL_H

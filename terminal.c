@@ -13,6 +13,9 @@
 #define RIGHT_CHAR 'C'
 #define LEFT_CHAR 'D'
 #define QUIT_CHAR 'q'
+#define BORDER_OFFSET 1
+#define GAME_OVER_ANIM_FRAME_TIME 250000
+#define GAME_OVER_FLASH_COUNT 3
 
 // Initialize raw mode and non-block char-read from keyboard
 // RETURNS: the termios attributes of the old terminal
@@ -69,5 +72,56 @@ void clean_exit(struct termios oldattr) {
 
 // Prints a character at the specified coordinate
 void print_coord(int row, int col, char c) {
-	printf("\033[%d;%dH%c", row, col, c);
+	printf("\033[%d;%dH%c", row + BORDER_OFFSET, col + BORDER_OFFSET, c);
+}
+
+// Prints the border of the game
+void print_border(int width, int height) {
+	printf("┏");
+	for (int i = 0; i < width; i++) {
+		printf("━");
+	}
+	printf("┓\n");
+	for (int i = 0; i < height; i++) {
+		printf("┃");
+		for (int j = 0; j < width; j++) {
+			printf(" ");
+		}
+		printf("┃\n");
+	}
+	printf("┗");
+	for (int i = 0; i < width; i++) {
+		printf("━");
+	}
+	printf("┛");
+}
+
+void game_over_anim(int score) {
+	fflush(stdout);
+	const char* gameover[8] = {
+		"  /$$$$$$   /$$$$$$  /$$      /$$ /$$$$$$$$        /$$$$$$  /$$    /$$ /$$$$$$$$ /$$$$$$$",
+		" /$$__  $$ /$$__  $$| $$$    /$$$| $$_____/       /$$__  $$| $$   | $$| $$_____/| $$__  $$",
+		"| $$  \\__/| $$  \\ $$| $$$$  /$$$$| $$            | $$  \\ $$| $$   | $$| $$      | $$  \\ $$",
+		"| $$ /$$$$| $$$$$$$$| $$ $$/$$ $$| $$$$$         | $$  | $$|  $$ / $$/| $$$$$   | $$$$$$$/",
+		"| $$|_  $$| $$__  $$| $$  $$$| $$| $$__/         | $$  | $$ \\  $$ $$/ | $$__/   | $$__  $$",
+		"| $$  \\ $$| $$  | $$| $$\\  $ | $$| $$            | $$  | $$  \\  $$$/  | $$      | $$  \\ $$",
+		"|  $$$$$$/| $$  | $$| $$ \\/  | $$| $$$$$$$$      |  $$$$$$/   \\  $/   | $$$$$$$$| $$  | $$",
+		" \\______/ |__/  |__/|__/     |__/|________/       \\______/     \\_/    |________/|__/  |__/",
+	};
+	system("clear");
+	for (int i = 0; i < 8; i++) {
+		puts(gameover[i]);
+		usleep(GAME_OVER_ANIM_FRAME_TIME);
+	}
+	system("clear");
+	for (int i = 0; i < GAME_OVER_FLASH_COUNT; i++) {
+		system("clear");
+		usleep(GAME_OVER_ANIM_FRAME_TIME);
+		for (int j = 0; j < 8; j++) {
+			puts(gameover[j]);
+		}
+		usleep(GAME_OVER_ANIM_FRAME_TIME);
+	}
+	printf("Your score is: %d", score);
+	fflush(stdout);
 }
